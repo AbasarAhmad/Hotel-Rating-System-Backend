@@ -1,0 +1,17 @@
+Before Microservices: 
+*	Monolithic architecture: multiple components are combined in single large app. 
+*	Single Code Base 
+*	Deployment in single bundle 
+*	Change in one service then whole app is redeployed 
+*	Building problem: developers has to communicate
+*	Problem in scale
+*	Cumbersome over time
+ 
+ 
+
+Microservices: 
+•	Large apps are divide into small parts 
+•	Different codebase 
+•	Each module managed independently 
+•	Different tech stack 
+•	Handling microservices is complex 
