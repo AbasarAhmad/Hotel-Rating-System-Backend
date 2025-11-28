@@ -15,3 +15,33 @@ Microservices:
 •	Each module managed independently 
 •	Different tech stack 
 •	Handling microservices is complex 
+
+
+
+Eureka
+1. What is Eureka?
+Eureka is a Service Discovery Server used so microservices can find each other automatically.
+
+2. Why we use Eureka?
+•	Services run on different ports
+•	Ports change when restarting
+•	Hardcoding URLs breaks the system
+Eureka keeps a registry of all services and their locations.
+
+3. How Eureka works?
+Each microservice registers itself to Eureka:
+Example Services & Ports
+UserService   → localhost:8081
+HotelService  → localhost:8082
+RatingService → localhost:8083
+Eureka stores this information like a phone directory.
+
+4. Real-Life Eureka = Hotel Reception
+•	Microservices = Rooms
+Guests don’t search rooms themselves —
+they ask reception: “Room 8082 kaha hai?”
+Similarly:
+UserService → asks Eureka → “Where is HotelService?”
+Eureka → returns actual URL (localhost:8082)
+________________________________________
+
