@@ -53,14 +53,14 @@ public class UserController {
     @GetMapping("/get/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
         User user = userService.getUserById(userId);
-        logger.info("Fetched user with id {}: {}", userId, user);
+        logger.info("Fetched user with id {}: "+ userId+"  And Name "+ user.getName());
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/update/{userId}")
     public ResponseEntity<User> updateUserById(@RequestBody User user, @PathVariable String userId) {
         User updatedUser = userService.updateUser(userId, user);
-        logger.info("Updated user with id {}: {}", userId, updatedUser);
+        logger.info("Updated user with id "+updatedUser);
         return ResponseEntity.ok(updatedUser);
     }
 
