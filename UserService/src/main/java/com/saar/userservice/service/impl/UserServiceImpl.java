@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.saar.userservice.entities.Hotel;
 import com.saar.userservice.entities.Rating;
 import com.saar.userservice.entities.User;
 import com.saar.userservice.exception.ResourceNotFoundException;
@@ -68,16 +72,44 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserById(String userId) {
-		// get user from database with the help of user repository
-		User user= userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("User is not found with id :"+ userId));
 		
-		//fetch rating of the above user from RatingService
-//		http://localhost:8083/api/ratings/get/userId/3fed2354-69e3-40fe-a3c5-2dfcabaa4986
-		 ArrayList<Rating> forObject= restTemplate.getForObject("http://localhost:8083/api/ratings/get/userId/"+user.getUserId(),ArrayList.class);
-		logger.info("{}", forObject);
-		user.setRatings(forObject);
-		return user;
+		// fetching User from UserService Db via userId
+	    User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new ResourceNotFoundException("User with given id is not found on server : " + userId));
+
+	    // Fetch ratings from RatingService
+	    String ratingUrl = "http://localhost:8083/api/ratings/get/userId/" + user.getUserId();
+
+//	    Yeh line API call karti hai aur JSON response ko Rating ke array me convert karke return karti hai.
+	    Rating[] ratingsOfUser = restTemplate.getForObject(ratingUrl, Rating[].class);   
+	    logger.info("Ratings => {}", Arrays.toString(ratingsOfUser));
+
+	    // converting Array to List
+	    List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
+
+	    List<Rating> ratingList = ratings.stream().map(rating -> {
+
+	        // API call to fetch Hotel via rating
+//	    	http://localhost:8082/api/hotels/get/5db264b8-ef01-4aea-b545-21351250d983
+	        String hotelUrl = "http://localhost:8082/api/hotels/get/" + rating.getHotelId();
+	        ResponseEntity<Hotel> response = restTemplate.getForEntity(hotelUrl, Hotel.class);
+
+	        Hotel hotel = response.getBody();
+	        logger.info("Hotel Service Status Code => {}", response.getStatusCode());
+
+	        // Set hotel into rating
+	        rating.setHotel(hotel);
+
+	        return rating;
+
+	    }).collect(Collectors.toList());
+
+	    // now set Rating into user
+	    user.setRatings(ratingList);
+
+	    return user;
 	}
+
 
 	@Override
 	public User updateUser(String userId, User user) {
