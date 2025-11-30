@@ -2,6 +2,7 @@ package com.saar.userservice.service.impl;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +41,29 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> getAllUser() {
-		return userRepository.findAll();
+		// Step 1: Get all users from DB
+	    List<User> users = userRepository.findAll();
+
+	    // Step 2: For each user → call RatingService → attach ratings
+	    users.forEach(user -> {
+	        try {
+	            String url = "http://localhost:8083/api/ratings/get/userId/" + user.getUserId();
+	            Rating[] ratingArray = restTemplate.getForObject(url, Rating[].class);
+
+	            if (ratingArray != null) {
+	                user.setRatings(Arrays.asList(ratingArray));
+	            } else {
+	                user.setRatings(new ArrayList<>());
+	            }
+
+	        } catch (Exception e) {
+	            // In case RatingService fails
+	            user.setRatings(new ArrayList<>());
+	            logger.error("Failed to fetch ratings for user: {}", user.getUserId(), e);
+	        }
+	    });
+
+	    return users;
 	}
 
 	@Override
