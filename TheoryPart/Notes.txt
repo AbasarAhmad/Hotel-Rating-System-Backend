@@ -32,7 +32,22 @@ Eureka keeps a registry of all services and their locations.
 Each microservice registers itself to Eureka:
 Example Services & Ports
 UserService   → localhost:8081
-HotelService  → localhost:8082
+HotelService  → localhost:8082❌ Tum direct URL use karte ho → Eureka use nahi hota
+String url = "http://localhost:8083/api/ratings/get/userId/" + user.getUserId();
+
+
+Ye direct IP + port call karta hai.
+Isme Eureka bilkul involve nahi hota.
+
+✔️ Eureka tab kaam karta hai jab tum SERVICE-NAME use karo
+
+Example:
+
+String url = "http://RATINGSERVICE/ratings/get/userId/" + user.getUserId();
+
+
+Yaha RATINGSERVICE → Eureka registry se milta hai.
+Eureka find karta hai ki RATINGSERVICE ka instance kis port pe run ho raha hai.
 RatingService → localhost:8083
 Eureka stores this information like a phone directory.
 
@@ -44,4 +59,25 @@ Similarly:
 UserService → asks Eureka → “Where is HotelService?”
 Eureka → returns actual URL (localhost:8082)
 ________________________________________
+
+
+
+@LoadBalanced : RestTemplate ko smart bana deta hai taaki wo service-name ke through API call kare, port ya hostname ke through nahi.
+
+❌ Ham direct URL use karte hai to  Eureka use nahi hota
+String url = "http://localhost:8083/api/ratings/get/userId/" + user.getUserId();
+
+
+Ye direct IP + port call karta hai.
+Isme Eureka bilkul involve nahi hota.
+
+✔️ Eureka tab kaam karta hai jab tum SERVICE-NAME use karo
+
+Example:
+
+String url = "http://RATINGSERVICE/ratings/get/userId/" + user.getUserId();
+
+
+Yaha RATINGSERVICE → Eureka registry se milta hai.
+Eureka find karta hai ki RATINGSERVICE ka instance kis port pe run ho raha hai.
 

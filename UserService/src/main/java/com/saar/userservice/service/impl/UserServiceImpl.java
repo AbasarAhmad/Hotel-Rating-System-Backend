@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
 	            .orElseThrow(() -> new ResourceNotFoundException("User with given id is not found on server : " + userId));
 
 	    // Fetch ratings from RatingService
-	    String ratingUrl = "http://localhost:8083/api/ratings/get/userId/" + user.getUserId();
+	    String ratingUrl = "http://RATINGSERVICE/api/ratings/get/userId/" + user.getUserId();
 
 //	    Yeh line API call karti hai aur JSON response ko Rating ke array me convert karke return karti hai.
 	    Rating[] ratingsOfUser = restTemplate.getForObject(ratingUrl, Rating[].class);   
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
 	        // API call to fetch Hotel via rating
 //	    	http://localhost:8082/api/hotels/get/5db264b8-ef01-4aea-b545-21351250d983
-	        String hotelUrl = "http://localhost:8082/api/hotels/get/" + rating.getHotelId();
+	        String hotelUrl = "http://HOTELSERVICE/api/hotels/get/" + rating.getHotelId();
 	        ResponseEntity<Hotel> response = restTemplate.getForEntity(hotelUrl, Hotel.class);
 
 	        Hotel hotel = response.getBody();
