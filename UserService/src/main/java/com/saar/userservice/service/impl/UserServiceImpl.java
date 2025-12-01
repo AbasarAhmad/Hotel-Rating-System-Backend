@@ -19,6 +19,8 @@ import com.saar.userservice.entities.Hotel;
 import com.saar.userservice.entities.Rating;
 import com.saar.userservice.entities.User;
 import com.saar.userservice.exception.ResourceNotFoundException;
+import com.saar.userservice.external.service.HotelService;
+import com.saar.userservice.external.service.RatingService;
 import com.saar.userservice.repositories.UserRepository;
 import com.saar.userservice.service.UserService;
 
@@ -34,7 +36,11 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RestTemplate restTemplate;
 	
+	@Autowired
+	private HotelService hotelService;
 	
+	@Autowired
+	private RatingService ratingService;
 	@Override
 	public User saveUser(User user) {
 		// code to generate Random userId
@@ -95,27 +101,33 @@ public class UserServiceImpl implements UserService {
 		// fetching User from UserService Db via userId
 	    User user = userRepository.findById(userId)
 	            .orElseThrow(() -> new ResourceNotFoundException("User with given id is not found on server : " + userId));
-
+/*
+	    // WITHOUT Feign 
 	    // Fetch ratings from RatingService
 	    String ratingUrl = "http://RATINGSERVICE/api/ratings/get/userId/" + user.getUserId();
 
-//	    Yeh line API call karti hai aur JSON response ko Rating ke array me convert karke return karti hai.
+		//	  Yeh line API call karti hai aur JSON response ko Rating ke array me convert karke return karti hai.
 	    Rating[] ratingsOfUser = restTemplate.getForObject(ratingUrl, Rating[].class);   
 	    logger.info("Ratings => {}", Arrays.toString(ratingsOfUser));
-
 	    // converting Array to List
 	    List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
-
+*/
+	    // AFTER feign 
+	 // Step-2: Fetch user ratings using Feign Client
+	    List<Rating> ratings = ratingService.getRatingById(user.getUserId());
+	    logger.info("Ratings Fetched => {}", ratings);
 	    List<Rating> ratingList = ratings.stream().map(rating -> {
 
 	        // API call to fetch Hotel via rating
-//	    	http://localhost:8082/api/hotels/get/5db264b8-ef01-4aea-b545-21351250d983
+/*			//Before feign client 
+	//	    http://localhost:8082/api/hotels/get/5db264b8-ef01-4aea-b545-21351250d983
 	        String hotelUrl = "http://HOTELSERVICE/api/hotels/get/" + rating.getHotelId();
 	        ResponseEntity<Hotel> response = restTemplate.getForEntity(hotelUrl, Hotel.class);
-
 	        Hotel hotel = response.getBody();
 	        logger.info("Hotel Service Status Code => {}", response.getStatusCode());
-
+*/
+	    	// After Feign Client
+	    	Hotel hotel=hotelService.getHotel(rating.getHotelId());
 	        // Set hotel into rating
 	        rating.setHotel(hotel);
 
