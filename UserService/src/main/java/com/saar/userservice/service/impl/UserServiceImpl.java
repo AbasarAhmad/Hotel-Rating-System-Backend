@@ -57,29 +57,20 @@ public class UserServiceImpl implements UserService {
 	    // Step 2: For each user → call RatingService → attach ratings
 	    users.forEach(user -> {
 	        try {
-	            String url = "http://localhost:8083/api/ratings/get/userId/" + user.getUserId();
-	            Rating[] ratingsOfUser = restTemplate.getForObject(url, Rating[].class);
+	        	
+	        	List<Rating>ratingsOfUser=ratingService.getRatingById(user.getUserId());
 	            // If no ratings, assign empty list
 	            if (ratingsOfUser == null) {
 	                user.setRatings(new ArrayList<>());
 	                return;
 	            }
-	         // converting Array to List
-	    	    List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
-	    	    
-	    	    List<Rating> ratingList = ratings.stream().map(rating -> {
-
-	    	        // API call to fetch Hotel via rating
-//	    	    	http://localhost:8082/api/hotels/get/5db264b8-ef01-4aea-b545-21351250d983
-	    	        String hotelUrl = "http://localhost:8082/api/hotels/get/" + rating.getHotelId();
-	    	        ResponseEntity<Hotel> response = restTemplate.getForEntity(hotelUrl, Hotel.class);
-
-	    	        Hotel hotel = response.getBody();
-	    	        logger.info("Hotel Service Status Code => {}", response.getStatusCode());
+//	            Will run for all ratings and set hotel of all rating
+	    	    List<Rating> ratingList = ratingsOfUser.stream().map(rating -> {
+	    	    	// fetching hotel from rating
+	    	        Hotel hotel = hotelService.getHotel(rating.getHotelId());
 
 	    	        // Set hotel into rating
 	    	        rating.setHotel(hotel);
-
 	    	        return rating;
 
 	    	    }).collect(Collectors.toList());
