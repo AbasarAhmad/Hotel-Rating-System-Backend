@@ -81,3 +81,78 @@ String url = "http://RATINGSERVICE/ratings/get/userId/" + user.getUserId();
 Yaha RATINGSERVICE → Eureka registry se milta hai.
 Eureka find karta hai ki RATINGSERVICE ka instance kis port pe run ho raha hai.
 
+
+
+
+What is Feign Client 
+
+Feign Client ek declarative HTTP client hai.
+
+Matlab:
+
+Tum API call ka code nahi likhte (RestTemplate wala).
+
+Tum sirf interface bnate ho, aur Feign tumhare liye API call automatically kar deta hai.
+
+Example:
+
+@FeignClient(name="HOTELSERVICE")
+public interface HotelService {
+
+    @GetMapping("/api/hotels/get/{hotelId}")
+    Hotel getHotel(@PathVariable String hotelId);
+}
+बस itna code likh diya — Feign khud:
+
+✔ Service discovery se URL find karega
+✔ HTTP request send karega
+✔ JSON ko Hotel object me convert karega
+✔ Errors handle karega
+
+Yeh sab tumhe RestTemplate se manually karna padta tha.
+
+💥 WHAT HAPPENS IF YOU DO NOT USE FEIGN?
+
+Agar Feign nahi use karoge, to tumhari microservices me ye problems aayengi:
+
+❌ 1. MORE CODE REQUIRED (Boilerplate)
+
+Without Feign → tumko har request ke liye RestTemplate likhna padega:
+
+String url = "http://HOTELSERVICE/api/hotels/get/" + hotelId;
+ResponseEntity<Hotel> response = restTemplate.getForEntity(url, Hotel.class);
+Hotel hotel = response.getBody();
+
+→ Bohot length aur repetitive code hota hai.
+
+❌ 2. MANUAL SERVICE DISCOVERY
+
+@LoadBalanced RestTemplate use karna padega:
+
+http://HOTELSERVICE/...
+
+Aur tumko:
+
+Load balancing handle karna
+
+Error handling karna
+
+Logging karna
+
+…ye sab manually karna padta hai.
+
+❌ 3. HARDER TO MAINTAIN
+
+Agar endpoint change ho gaya:
+
+RestTemplate URLs dhundh dhundh kar update karne padenge.
+
+Feign me bas interface update = sab kaam auto ho jata hai.
+
+❌ 4. NO AUTOMATIC FAILOVER / RETRIES
+
+Feign + LoadBalancer + CircuitBreaker
+→ automatic retries, fallback, fault-tolerance deta hai.
+
+RestTemplate me ye sb tumko manually likhna padta.
+
