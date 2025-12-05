@@ -156,3 +156,16 @@ Feign + LoadBalancer + CircuitBreaker
 
 RestTemplate me ye sb tumko manually likhna padta.
 
+
+
+Before APIGATEWAY:
+		http://localhost:8081/api/users/get
+		http://localhost:8082/api/hotels/get
+		http://localhost:8083/api/ratings/get
+
+After  APIGATEWAY:
+	we are able to fetch these urls:
+		http://localhost:8084/api/users/get
+		http://localhost:8084/api/hotels/get
+		http://localhost:8084/api/ratings/get
+		

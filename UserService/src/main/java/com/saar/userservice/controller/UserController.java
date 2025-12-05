@@ -20,7 +20,7 @@ import com.saar.userservice.entities.User;
 import com.saar.userservice.service.UserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
