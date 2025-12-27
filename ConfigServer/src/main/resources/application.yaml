@@ -1,0 +1,13 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: CONFIGSERVICE
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/AbasarAhmad/HotelRatingSystem-ConfigServer
+          clone-on-start: true
