@@ -166,6 +166,20 @@ Before APIGATEWAY:
 After  APIGATEWAY:
 	we are able to fetch these urls:
 		http://localhost:8084/api/users/get
-		http://localhost:8084/api/hotels/get
 		http://localhost:8084/api/ratings/get
-		
+
+
+
+When i am hitting this api :    http://localhost:8082/api/staffs   getting output
+but when i am trying to hit this api gateway :   http://localhost:8084/api/staffs  getting error's 
+
+
+so we did change in  apiGateway properties file :
+ 	# HOTEL SERVICE ROUTE
+        - id: HOTELSERVICE
+          uri: lb://HOTELSERVICE
+          predicates:
+            - Path=/api/hotels/**, /api/staffs/**
+
+Now we are able to run  this url also :   http://localhost:8084/api/staffs
+means ki koi new url agar add hota hai to hamai usko apiGateWay mai entry krainge tabhi GateWay ke through access kr painge.
