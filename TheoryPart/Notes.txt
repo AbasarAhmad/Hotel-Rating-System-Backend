@@ -213,3 +213,65 @@ Config Server ka Flow:
 	Config Server Git se configs read karta hai
 	Client service startup par Config Server se config fetch karti hai
 	Properties local application.yml jaisi hi behave karti hain
+
+
+
+
+
+
+
+
+=============  Fault Tolerance
+
+Fault Tolerance ka matlab hota hai:
+	👉 Agar system ka koi part fail ho jaaye, tab bhi application gracefully kaam karti rahe aur pura system down na ho.
+
+Microservices architecture mein yeh bahut critical concept hai, kyunki:
+		Har service network par dependent hoti hai
+		Network slow / down ho sakta hai
+		Downstream service fail ho sakti hai
+
+Problem bina Fault Tolerance ke: 
+
+	UserService → RatingService → HotelService
+	HotelService down ho gayi ❌
+	➡️ RatingService fail
+	➡️ UserService fail
+	➡️ Pura flow break 💥
+
+Fault Tolerance kya solve karta hai : 
+	✔ System crash hone se bachata hai
+	✔ Partial failure ko handle karta hai
+	✔ Better user experience deta hai
+	✔ Cascading failure prevent karta hai
+
+Common Fault Tolerance Patterns: 
+	1. Circuit Breaker:
+		Agar repeatedly failure ho raha hai to calls temporarily band kar do
+			Jab service bar-bar fail ho
+			Circuit OPEN ho jata hai
+			Direct fallback response milta hai
+		Spring Boot mein mostly use hota hai: Resilience4j
+	
+	2. Fallback 🛟
+
+		Failure ke case mein default / backup response
+		Example:
+		HotelService down → "Hotel info not available right now"
+		User ko error dikhane ke bajay meaningful response milta hai 👍
+	3
+	.
+	.
+
+Circuit Breaker:
+	Circuit Breaker ek fault tolerance pattern hai jo kisi failing service ko bar-bar call karne se rokta hai.
+	👉 Jab koi downstream service (jaise RatingService / HotelService) repeatedly fail karti hai, Circuit Breaker:
+
+	Requests temporarily block kar deta hai
+	System ko overload hone se bachata hai
+	Fallback response return karta hai
+
+Circuit Breaker States:
+	CLOSED → Normal calls allowed
+	OPEN → Calls blocked, direct fallback
+	HALF-OPEN → Few test calls, agar success ho to CLOSED
