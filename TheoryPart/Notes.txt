@@ -183,3 +183,33 @@ so we did change in  apiGateway properties file :
 
 Now we are able to run  this url also :   http://localhost:8084/api/staffs
 means ki koi new url agar add hota hai to hamai usko apiGateWay mai entry krainge tabhi GateWay ke through access kr painge.
+
+
+
+
+
+======= Config Server: 
+
+ 	Spring Boot Config Server ek centralized configuration management solution hai jo Spring Cloud ka part hota hai. Iska main kaam hota hai 	multiple microservices ke configuration (properties / YAML) ko ek jagah se manage karna.
+
+	Main simple words mein:
+	👉 Config Server ek alag Spring Boot application hoti hai jo config files ko Git (ya kisi aur source) se read karke client services ko 	runtime par provide karti hai.
+
+Problem kya hoti hai bina Config Server ke?
+	Agar tumhare paas 5–10 microservices hain:
+	Har service ka application.yml
+	Har environment ka alag config (dev / qa / prod)
+	Change ke liye sab services ko redeploy karna padta hai
+
+Config Server kya solve karta hai? :
+	✔ Central place par config
+	✔ Environment-wise config
+	✔ Runtime config refresh (without restart)
+	✔ Secure config (passwords, tokens)
+	✔ Easy scaling in microservices
+
+Config Server ka Flow:
+	Config files Git repo mein hoti hain
+	Config Server Git se configs read karta hai
+	Client service startup par Config Server se config fetch karti hai
+	Properties local application.yml jaisi hi behave karti hain
