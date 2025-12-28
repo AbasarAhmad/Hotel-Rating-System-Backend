@@ -275,3 +275,24 @@ Circuit Breaker States:
 	CLOSED → Normal calls allowed
 	OPEN → Calls blocked, direct fallback
 	HALF-OPEN → Few test calls, agar success ho to CLOSED
+
+
+==================  Rate Limiter
+
+Rate Limiter ka kaam hota hai kisi service par aane wali requests ko limit karna.
+👉 Matlab:
+	Ek user / client fixed time window me limited requests hi bhej sakta hai
+	Extra requests reject ho jaati hain ya wait karwati hain
+
+Kyun use karte hain: 
+Security 🔐 → DoS / brute-force attacks se protection
+Performance ⚡ → Service overload nahi hoti
+Stability 🧱 → System smoothly chalta rehta hai
+
+Simple example
+	Rule: 10 requests / 1 second
+	Agar user 1 second me:
+	10 requests bheje → ✅ allowed
+	11th request → ❌ blocked / delayed
+
+Rate Limiter limits the number of requests in a given time to protect the service from overload and abuse.
