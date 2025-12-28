@@ -20,6 +20,7 @@ import com.saar.userservice.entities.User;
 import com.saar.userservice.service.UserService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 
 @RestController
 @RequestMapping("/users")
@@ -52,6 +53,9 @@ public class UserController {
         return ResponseEntity.ok(ls);
     }
 
+    /*
+    // Impemented Circuit Breaker
+    ///
     @GetMapping("/get/{userId}")
     @CircuitBreaker(name="ratingHotelBreaker",fallbackMethod = "ratingHotelFallbackMethod")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
@@ -59,6 +63,21 @@ public class UserController {
         logger.info("Fetched user with id {}: "+ userId+"  And Name "+ user.getName());
         return ResponseEntity.ok(user);
     }
+    */
+    
+    int retryCount=1;
+    // Implemeted Retry
+    @GetMapping("/get/{userId}")
+    @Retry(name="ratingHotelRetry",fallbackMethod = "ratingHotelFallbackMethod")
+    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+    	logger.info("Retry count is : {}", retryCount);
+    	retryCount++;
+    	User user = userService.getUserById(userId);
+    	logger.info("Fetched user with id {}: "+ userId+"  And Name "+ user.getName());
+    	return ResponseEntity.ok(user);
+    }
+    
+    
     public ResponseEntity<User>ratingHotelFallbackMethod(String userId, Exception ex){
     	logger.info("Fallback is executed because service is down: "+ex.getMessage());
     	User user= User.builder()
